@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { User } from './models/user';
+import { AccountService } from './_services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -10,18 +12,22 @@ export class AppComponent implements OnInit {
   title = 'InPrompts';
   users: any;
 
-  constructor(private http: HttpClient) {
-
+  constructor(private accountService: AccountService) {
   }
 
   ngOnInit(): any {
-    this.getUsers();
+    this.setCurrentUser();
   }
 
-  getUsers(): any {
-    this.http.get('https://localhost:5001/api/users').subscribe({
-      next: response => this.users = response,
-      error: error => console.log(error)
-    });
+  setCurrentUser(): any{
+    const storageItem = localStorage.getItem('user')
+    let user: User | null = null;
+    if (storageItem)
+    {
+      user = JSON.parse(storageItem);
+    }
+    this.accountService.setCurrentUser(user);
   }
+
+
 }
